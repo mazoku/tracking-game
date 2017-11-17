@@ -1,0 +1,11 @@
+{
+    #######
+	# DATASET PATHS
+	#######
+    "dropbox_data_dir": "/home/tomas/Dropbox/Data/tracking_game",
+
+    #######
+    # IMAGE PREPROCESSING
+    #######
+    "scale": 0.5
+}
