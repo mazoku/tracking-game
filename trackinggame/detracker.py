@@ -19,13 +19,22 @@ def select_object(video_capture):
         if key == ord('s'):
             break
 
-    roi_selector = SelectROI()
+    roi_selector = SelectROI('circ')
     roi_selector.select(frame)
-    roi_rect = roi_selector.roi_rect
+    roi = roi_selector.roi
 
-    img_roi = frame[roi_rect[1]:roi_rect[1] + roi_rect[3], roi_rect[0]:roi_rect[0] + roi_rect[2]]
+    if roi_selector.roi_type == 'rect':
+        img_roi = frame[roi[1]:roi[1] + roi[3], roi[0]:roi[0] + roi[2]]
+    else:
+        img_roi = frame[roi[0][1] - roi[1]:roi[0][1] + roi[1], roi[0][0] - roi[1]:roi[0][0] + roi[1]]
 
-    return roi_rect, img_roi
+    return frame, roi_selector.mask, img_roi, roi
+
+
+def create_model(img, mask, img_roi, roi):
+    cv2.imshow('img', img_roi)
+    cv2.imshow('mask', mask)
+    cv2.waitKey(0)
 
 
 def visualization(frame, mask):
@@ -53,11 +62,12 @@ def visualization(frame, mask):
 if __name__ == '__main__':
     conf = Conf('conf.json')
     data_path = '/home/tomas/Dropbox/Data/tracking_game/ball_bowl.mp4'
-    # video_capture = cv2.VideoCapture(data_path)
-    video_capture = cv2.VideoCapture(0)
+    video_capture = cv2.VideoCapture(data_path)
+    # video_capture = cv2.VideoCapture(0)
 
-    roi_rect, img_roi = select_object(video_capture)
+    img, mask, img_roi, roi = select_object(video_capture)
 
+    model = create_model(img, mask, img_roi, roi)
 
     while True:
         ret, frame = video_capture.read()
